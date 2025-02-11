@@ -159,3 +159,21 @@ java.lang.Exception: The project description file (.project) for 'application_fi
 
 !ENTRY org.eclipse.cdt.core 1 0 2025-02-10 18:31:49.874
 !MESSAGE Indexed 'application_firmware' (22 sources, 85 headers) in 2.74 sec: 7,712 declarations; 53,918 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0032%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2025-02-10 19:47:39.385
+!MESSAGE Indexed 'secure_bootloader' (22 sources, 116 headers) in 1.66 sec: 13,373 declarations; 76,181 references; 3 unresolved inclusions; 46 syntax errors; 171 unresolved names (0.19%)
+!SESSION 2025-02-11 11:10:54.390 -----------------------------------------------
+eclipse.buildId=Version 1.17.0
+java.version=21.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2025-02-11 11:11:31.063
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2025-02-11 11:11:31.065
+!MESSAGE Log4j2 initialized with config file C:\Users\EMaso\STM32CubeIDE\workspace_1.17.0\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2025-02-11 11:11:38.566
+!MESSAGE Started RMI Server, listening on port 41337
