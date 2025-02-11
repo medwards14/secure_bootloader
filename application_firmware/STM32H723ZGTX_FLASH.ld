@@ -45,8 +45,8 @@ MEMORY
 {
   ITCMRAM (xrw)    : ORIGIN = 0x00000000,   LENGTH = 64K
   DTCMRAM (xrw)    : ORIGIN = 0x20000000,   LENGTH = 128K
-  /* reserving memory space for the appication starting at address 0x08004000 */
-  FLASH_APPLICATION (rx)    : ORIGIN = 0x08004000,   LENGTH = 1008K
+  /* reserving memory space for the appication starting at address 0x08020000 */
+  FLASH_APPLICATION (rx)    : ORIGIN = 0x08020000,   LENGTH = 896K
   /* reserving RAM for the application to use */
   RAM_APPLICATION (xrw)    : ORIGIN = 0x24008000,   LENGTH = 288K
   RAM_D2  (xrw)    : ORIGIN = 0x30000000,   LENGTH = 32K

@@ -96,7 +96,7 @@
 /* the application firmware needs to start at memory address 0x08004000 */
 
 #ifndef APPLICATION_VTOR_ADDRESS
-#define APPLICATION_VTOR_ADDRESS  (0x08004000U)
+#define APPLICATION_VTOR_ADDRESS  (0x08020000U)
 #endif
 
 /******************************************************************************/

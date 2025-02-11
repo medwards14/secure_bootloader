@@ -46,10 +46,10 @@ MEMORY
 {
   ITCMRAM (xrw)    : ORIGIN = 0x00000000,   LENGTH = 64K
   DTCMRAM (xrw)    : ORIGIN = 0x20000000,   LENGTH = 128K
-  /* reserving space in memory for separate bootloader and application regions */
-  FLASH_BOOTLOADER (rx)    : ORIGIN = 0x08000000,   LENGTH = 16K
-  FLASH_APPLICATION (rx)    : ORIGIN = 0x08004000,   LENGTH = 1008K
-  /* reserving space in memory to have separate bootloader and application RAM as well */
+  /* reserving the first 128K of space in memory for the bootloader */
+  FLASH_BOOTLOADER (rx)    : ORIGIN = 0x08000000,   LENGTH = 128K
+  /* reserving the remaining 896K for the application (from 0x08020000 up to 0x080FFFFF) */
+  FLASH_APPLICATION (rx)    : ORIGIN = 0x08020000,   LENGTH = 896K
   RAM_BOOTLOADER (xrw) :    ORIGIN = 0x24000000,   LENGTH = 32K
   RAM_APPLICATION (xrw) :    ORIGIN = 0x24008000,   LENGTH = 288K
   RAM_D2  (xrw)    : ORIGIN = 0x30000000,   LENGTH = 32K
