@@ -18,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32h7xx_hal.h"
+#include "jump_to_application.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -48,6 +50,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MPU_Config(void);
+void Error_Handler(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -61,6 +64,20 @@ static void MPU_Config(void);
   * @brief  The application entry point.
   * @retval int
   */
+
+static void Bootloader_DeInit(void)
+{
+	SysTick->CTRL = 0;
+
+	SCB_DisableICache();
+	SCB_DisableDCache();
+
+	HAL_RCC_DeInit();
+	HAL_DeInit();
+
+	__disable_irq();
+}
+
 int main(void)
 {
 
@@ -91,6 +108,10 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
+
+  Bootloader_DeInit();
+
+  jump_to_application();
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
