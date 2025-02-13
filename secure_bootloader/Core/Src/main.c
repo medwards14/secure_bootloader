@@ -18,8 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32h7xx_hal.h"
 #include "jump_to_application.h"
+#include <string.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -43,6 +43,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 
+UART_HandleTypeDef huart3;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -50,7 +52,9 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MPU_Config(void);
-void Error_Handler(void);
+static void MX_GPIO_Init(void);
+static void MX_USART3_UART_Init(void);
+void Bootloader_DeInit(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -64,20 +68,6 @@ void Error_Handler(void);
   * @brief  The application entry point.
   * @retval int
   */
-
-static void Bootloader_DeInit(void)
-{
-	SysTick->CTRL = 0;
-
-	SCB_DisableICache();
-	SCB_DisableDCache();
-
-	HAL_RCC_DeInit();
-	HAL_DeInit();
-
-	__disable_irq();
-}
-
 int main(void)
 {
 
@@ -105,13 +95,42 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  /* USER CODE END 2 */
+  /* sending UART debug message for bootloader start */
+  const char *msg = "bootloader is running\r\n";
+  HAL_UART_Transmit(&huart3, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
 
+  /* debug message for deinitialization */
+  const char *deinit_msg = "bootloader is de-initializing\r\n";
+  HAL_UART_Transmit(&huart3, (uint8_t*)deinit_msg, strlen(deinit_msg), HAL_MAX_DELAY);
+
+  /* proceeding with bootloader functions */
   Bootloader_DeInit();
 
+  /* debug message before jumping to application */
+  const char *pre_jump_msg = "preparing to jump to application\r\n";
+  HAL_UART_Transmit(&huart3, (uint8_t*)pre_jump_msg, strlen(pre_jump_msg), HAL_MAX_DELAY);
+
+  /* small delay to ensure UART transmission completes */
+  HAL_Delay(100);
+
+  /* disabling UART before jump */
+  HAL_UART_DeInit(&huart3);
+
+  /* debug message before actual jump */
+  const char *jump_msg = "jumping to application\r\n";
+  HAL_UART_Transmit(&huart3, (uint8_t*)jump_msg, strlen(jump_msg), HAL_MAX_DELAY);
+
   jump_to_application();
+
+  /* If execution continues, jump failed */
+  const char *error_msg = "error: failed to jump!\r\n";
+  HAL_UART_Transmit(&huart3, (uint8_t*)error_msg, strlen(error_msg), HAL_MAX_DELAY);
+
+  /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -164,7 +183,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV1;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV1;
 
@@ -174,7 +193,87 @@ void SystemClock_Config(void)
   }
 }
 
+/**
+  * @brief USART3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART3_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART3_Init 0 */
+
+  /* USER CODE END USART3_Init 0 */
+
+  /* USER CODE BEGIN USART3_Init 1 */
+
+  /* USER CODE END USART3_Init 1 */
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 115200;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart3.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart3, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart3, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_DisableFifoMode(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART3_Init 2 */
+
+  /* USER CODE END USART3_Init 2 */
+
+}
+
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
+}
+
 /* USER CODE BEGIN 4 */
+
+void Bootloader_DeInit(void)
+{
+    SysTick->CTRL = 0;
+
+    /* disabling caches */
+    SCB_DisableICache();
+    SCB_DisableDCache();
+
+    HAL_RCC_DeInit();
+    HAL_DeInit();
+
+    /* disabling all interrupts */
+    __disable_irq();
+}
 
 /* USER CODE END 4 */
 
