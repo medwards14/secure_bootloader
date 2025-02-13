@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32h7xx_hal.h"
 #include "jump_to_application.h"
 #include <string.h>
 
